@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Invites · Lantern{% endblock %}
+{% block body_class %}app{% endblock %}
+{% block body %}
+    {% set active = "invites" %}
+    {% include "_sidebar.html" %}
+    <main class="panel">
+        <article>
+            <div class="panel-head">
+                <h1>Invites</h1>
+                {% if remaining > 0 %}<form method="post" action="{{ url_for('user_invites') }}">
+                    {{ csrf_field() }}
+                    <button type="submit">Create invite</button>
+                </form>{% endif %}
+            </div>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}<p class="quiet meta">{{ messages[0] }}</p>{% endif %}
+            {% endwith %}
+            <p class="quiet">{{ remaining }} invite{{ '' if remaining == 1 else 's' }} remaining</p>
+            <table>
+                <thead><tr><th>Code</th><th>Status</th><th>Joined as</th><th>Created</th></tr></thead>
+                <tbody>
+                    {% for invite in invites %}
+                    <tr>
+                        <td data-label="Code"><code>{{ invite.code }}</code></td>
+                        <td data-label="Status">{{ "Used" if invite.used_by else "Available" }}</td>
+                        <td data-label="Joined as">{{ invite.used_by.username if invite.used_by else "-" }}</td>
+                        <td data-label="Created">{{ invite.created_at.strftime("%Y-%m-%d") }}</td>
+                    </tr>
+                    {% else %}<tr><td colspan="4">No invites created.</td></tr>{% endfor %}
+                </tbody>
+            </table>
+        </article>
+    </main>
+{% endblock %}

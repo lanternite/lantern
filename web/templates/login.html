@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block body %}
+    <main class="wrap">
+        <h1>Lantern</h1>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}<p class="quiet">{{ messages[0] }}</p>{% endif %}
+        {% endwith %}
+        <form method="post" action="{{ url_for('do_login') }}">
+            {{ csrf_field() }}
+            <div class="field">
+                <label for="user">Username</label>
+                <input id="user" name="user" type="text" autocomplete="username" required>
+            </div>
+            <div class="field">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" autocomplete="current-password" required>
+            </div>
+            <p class="actions"><button type="submit">Log in</button>{% if invites_enabled %} <a href="{{ url_for('register') }}">Register</a>{% endif %}</p>
+        </form>
+    </main>
+{% endblock %}

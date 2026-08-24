@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Create account · Lantern{% endblock %}
+{% block body %}
+    <main class="wrap">
+        <h1>Create your account</h1>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}<p class="quiet">{{ messages[0] }}</p>{% endif %}
+        {% endwith %}
+        <form method="post" action="{{ url_for('register_account') }}">
+            {{ csrf_field() }}
+            <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email" required>
+            </div>
+            <div class="field">
+                <label for="user">Username</label>
+                <input id="user" name="user" type="text" autocomplete="username" required>
+            </div>
+            <div class="field">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" autocomplete="new-password" required minlength="10">
+            </div>
+            <p><button type="submit">Create account</button></p>
+        </form>
+    </main>
+{% endblock %}

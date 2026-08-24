@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{% block title %}Lantern{% endblock %}</title>
+    <link rel="icon" type="image/png" sizes="300x300" href="{{ url_for('static', filename='logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body class="{% block body_class %}{% endblock %}">
+{% block body %}{% endblock %}
+</body>
+</html>

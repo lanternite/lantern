@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Account · Lantern{% endblock %}
+{% block body_class %}app{% endblock %}
+{% block body %}
+    {% set active = "account" %}
+    {% include "_sidebar.html" %}
+    <main class="panel">
+        <article>
+            <div class="panel-head">
+                <h1>Account</h1>
+            </div>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}<p class="quiet meta">{{ messages[0] }}</p>{% endif %}
+            {% endwith %}
+            <table>
+                <tbody>
+                    <tr><th scope="row">Username</th><td>{{ current_user.username }}</td></tr>
+                    <tr><th scope="row">Email</th><td>{{ current_user.email }}</td></tr>
+                    <tr><th scope="row">Member since</th><td>{{ current_user.created_at.strftime("%Y-%m-%d") }}</td></tr>
+                    <tr><th scope="row">Artworks</th><td>{{ artwork_count }}/{{ artwork_cap }} tracked</td></tr>
+                </tbody>
+            </table>
+
+            <h2>Change password</h2>
+            <form method="post" action="{{ url_for('account') }}">
+                {{ csrf_field() }}
+                <div class="field">
+                    <label for="current_password">Current password</label>
+                    <input id="current_password" name="current_password" type="password" autocomplete="current-password" required>
+                </div>
+                <div class="field">
+                    <label for="new_password">New password</label>
+                    <input id="new_password" name="new_password" type="password" autocomplete="new-password" required minlength="10">
+                </div>
+                <div class="field">
+                    <label for="confirm_password">Confirm new password</label>
+                    <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" required minlength="10">
+                </div>
+                <p><button type="submit">Update password</button></p>
+            </form>
+
+            <section class="danger-zone">
+                <h2>Delete account</h2>
+                <p class="quiet">This is permanent.</p>
+                <form method="post" action="{{ url_for('delete_account') }}">
+                    {{ csrf_field() }}
+                    <div class="field">
+                        <label for="delete-password">Confirm password</label>
+                        <input id="delete-password" name="password" type="password" autocomplete="current-password" required>
+                    </div>
+                    <label class="confirm-delete">
+                        <input name="permanently_delete" type="checkbox" value="yes" required>
+                        <span>I understand that my account data will be permanently deleted.</span>
+                    </label>
+                    <p><button type="submit" class="danger-btn">Delete account</button></p>
+                </form>
+            </section>
+        </article>
+    </main>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Account deleted · Lantern{% endblock %}
+{% block body %}
+    <main class="wrap">
+        <h1>Account deleted</h1>
+        <div class="return-invite">
+            <p>Account deleted. If you want back in later, use this:</p>
+            <p><code>{{ invite_code }}</code></p>
+        </div>
+        {% if invites_enabled %}
+            <p><a href="{{ url_for('register') }}">Create another account</a></p>
+        {% else %}
+            <p class="quiet">This code can be used when registration is available.</p>
+        {% endif %}
+        <p><a href="{{ url_for('login') }}">Return to login</a></p>
+    </main>
+{% endblock %}

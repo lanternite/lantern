@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Analytics · Lantern{% endblock %}
+{% block body_class %}app{% endblock %}
+{% block body %}
+    {% set active = "analytics" %}
+    {% include "_sidebar.html" %}
+    <main class="panel">
+        <article>
+            <div class="panel-head">
+                <h1>Analytics</h1>
+            </div>
+            <table>
+                <tbody>
+                    {% for label, value in stats %}
+                    <tr>
+                        <th scope="row">{{ label }}</th>
+                        <td class="num">{{ value }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </article>
+    </main>
+{% endblock %}

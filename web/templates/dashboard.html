@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Watchlist · Lantern{% endblock %}
+{% block body_class %}app{% endblock %}
+{% block body %}
+    {% set active = "watchlist" %}
+    {% include "_sidebar.html" %}
+    <main class="panel">
+        <article>
+            <div class="panel-head">
+                <h1>Watchlist</h1>
+                <form method="post" action="{{ url_for('upload') }}" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                    <label class="btn" for="upload">Upload artwork</label>
+                    <input type="file" id="upload" name="file" class="sr-only" accept="image/*" multiple onchange="this.form.submit()">
+                </form>
+            </div>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}<p class="quiet meta">{{ messages[0] }}</p>{% endif %}
+            {% endwith %}
+            {% if scanner_stale %}
+                <p class="quiet meta">Scanner unavailable. Showing last status.</p>
+            {% endif %}
+            {% if artwork_limit is not none %}
+                <p class="quiet meta">
+                    {{ artworks|length }}/{{ artwork_limit }} artworks
+                </p>
+            {% endif %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Artwork</th>
+                        <th>Added</th>
+                        <th>Status</th>
+                        <th class="num">Matches</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for artwork in artworks %}
+                    <tr>
+                        <td data-label="Artwork">
+                            <span class="artwork-name-tools">
+                                <span class="artwork-filename">{{ artwork.filename }}</span>
+                                <span class="artwork-tools">
+                                    <button type="button" class="info-btn note-btn" data-note="{{ artwork.note or '' }}" data-action="{{ url_for('update_note', artwork_id=artwork.id) }}" title="{{ artwork.note or 'No note. Click to add one.' }}">i</button>
+                                    <button type="button" class="info-btn fp-btn" data-fingerprint="{{ artwork.fingerprint or '' }}" title="PDQ fingerprint. Click to view or copy.">#</button>
+                                </span>
+                            </span>
+                        </td>
+                        <td data-label="Added">{{ artwork.added_at.strftime("%Y-%m-%d") }}</td>
+                        <td data-label="Status">
+                            {%- set state = states[artwork.id] -%}
+                            {%- if state.status in ('queued', 'leased') %}<span class="status-pending">Scanning</span>
+                            {%- elif state.matches %}<span class="status-flag">Flagged</span>
+                            {%- else %}Clear{% endif -%}
+                        </td>
+                        <td class="num" data-label="Matches">{{ state.matches|length if state.status == 'done' else "-" }}</td>
+                        <td data-label="">
+                            <div class="artwork-row-actions">
+                                <a href="{{ url_for('matches', artwork_id=artwork.id) }}">View</a>
+                                <form method="post" action="{{ url_for('delete_artwork', artwork_id=artwork.id) }}" class="row-action" onsubmit="return confirm('Remove this artwork from your watchlist?');">
+                                    {{ csrf_field() }}
+                                    <button type="submit" class="link-btn">Remove</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="5">No registered works</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </article>
+    </main>
+    <script>
+        document.querySelectorAll(".note-btn").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                var note = prompt("Note for this artwork (500 characters max):", btn.dataset.note || "");
+                if (note === null) return;
+                note = note.slice(0, 500);
+                fetch(btn.dataset.action, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: "note=" + encodeURIComponent(note)
+                })
+                    .then(function (res) { return res.json(); })
+                    .then(function (data) {
+                        btn.dataset.note = data.note;
+                        btn.title = data.note || "No note. Click to add one.";
+                    });
+            });
+        });
+
+        document.querySelectorAll(".fp-btn").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                prompt("PDQ fingerprint", btn.dataset.fingerprint || "");
+            });
+        });
+    </script>
+{% endblock %}

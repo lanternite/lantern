@@ -1,0 +1,26 @@
+<header class="side">
+    <h2>
+        <a href="{{ url_for('dashboard') }}">
+            <img class="side-logo" src="{{ url_for('static', filename='logo.png') }}" alt="">
+            <span>Lantern</span>
+        </a>
+    </h2>
+    <p class="quiet side-user">{{ current_user.username }}</p>
+    <nav>
+        <ul class="suppress">
+            <li{% if active == "watchlist" %} class="active"{% endif %}>{% if active == "watchlist" %}<strong>Watchlist</strong>{% else %}<a href="{{ url_for('dashboard') }}">Watchlist</a>{% endif %}</li>
+            <li{% if active == "matches" %} class="active"{% endif %}>{% if active == "matches" %}<strong>Matches</strong>{% else %}<a href="{{ url_for('matches') }}">Matches</a>{% endif %}</li>
+            <li{% if active == "search" %} class="active"{% endif %}>{% if active == "search" %}<strong>Search</strong>{% else %}<a href="{{ url_for('search') }}">Search</a>{% endif %}</li>
+            <li{% if active == "analytics" %} class="active"{% endif %}>{% if active == "analytics" %}<strong>Analytics</strong>{% else %}<a href="{{ url_for('analytics') }}">Analytics</a>{% endif %}</li>
+            <li{% if active == "account" %} class="active"{% endif %}>{% if active == "account" %}<strong>Account</strong>{% else %}<a href="{{ url_for('account') }}">Account</a>{% endif %}</li>
+            {% if invites_enabled and has_invite_access %}<li{% if active == "invites" %} class="active"{% endif %}>{% if active == "invites" %}<strong>Invites</strong>{% else %}<a href="{{ url_for('user_invites') }}">Invites</a>{% endif %}</li>{% endif %}
+        </ul>
+    </nav>
+    <div class="side-actions">
+        <p class="side-foot"><a href="https://discord.gg/cyfxnNFQDz" target="_blank" rel="noopener">Discord</a></p>
+        <form method="post" action="{{ url_for('logout') }}" class="side-foot">
+            {{ csrf_field() }}
+            <button type="submit" class="link-btn">Log out</button>
+        </form>
+    </div>
+</header>

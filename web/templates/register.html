@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Join · Lantern{% endblock %}
+{% block body %}
+    <main class="wrap">
+        <h1>Join Lantern</h1>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}<p class="quiet">{{ messages[0] }}</p>{% endif %}
+        {% endwith %}
+        <form method="post" action="{{ url_for('register') }}">
+            {{ csrf_field() }}
+            <div class="field">
+                <label for="invite">Invite code</label>
+                <input id="invite" name="invite" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" required>
+            </div>
+            <p><button type="submit">Continue</button></p>
+        </form>
+        <p class="quiet">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+    </main>
+{% endblock %}

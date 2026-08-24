@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Search · Lantern{% endblock %}
+{% block body_class %}app{% endblock %}
+{% block body %}
+    {% set active = "search" %}
+    {% include "_sidebar.html" %}
+    <main class="panel">
+        <article>
+            <div class="panel-head">
+                <h1>Search</h1>
+            </div>
+            <p class="quiet">{{ scan_count }}/{{ scan_limit }} scans today</p>
+            <form method="post" action="{{ url_for('search') }}" enctype="multipart/form-data" class="search-form">
+                {{ csrf_field() }}
+                <span class="search-mode">
+                    <label><input type="radio" name="mode" value="image" class="mode-radio" data-show="image-field" {% if mode != "fingerprint" %}checked{% endif %}> Image</label>
+                    <label><input type="radio" name="mode" value="fingerprint" class="mode-radio" data-show="fingerprint-field" {% if mode == "fingerprint" %}checked{% endif %}> Fingerprint hash</label>
+                </span>
+                <span id="image-field" class="search-field">
+                    <label class="btn" for="search-file">Choose image</label>
+                    <input type="file" id="search-file" name="file" class="sr-only" accept="image/*">
+                    <span id="search-file-name" class="quiet"></span>
+                </span>
+                <span id="fingerprint-field" class="search-field">
+                    <input type="text" name="fingerprint" value="{{ fingerprint if mode == 'fingerprint' else '' }}" placeholder="Fingerprint hash" autocomplete="off">
+                </span>
+                <button type="submit">Search index</button>
+            </form>
+
+            {% if error %}
+                <p class="quiet meta">{{ error }}</p>
+            {% elif searched %}
+                <p class="quiet meta">
+                    Fingerprint <code>{{ fingerprint }}</code>.
+                    {{ results|length }} result{{ "s" if results|length != 1 }}
+                </p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dataset / source</th>
+                            <th>Location</th>
+                            <th class="num">Confidence</th>
+                            <th class="found-date">Found</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in results %}
+                        <tr>
+                            <td data-label="Dataset / source" class="source-details">
+                                <div class="source-stack">
+                                    <strong>{{ m.dataset_name }}</strong>
+                                    <span class="source-meta">{{ m.site }}</span>
+                                </div>
+                            </td>
+                            <td data-label="Location" class="source-location">
+                                <div class="source-stack">
+                                    {% if m.location_count > 1 %}
+                                        <details class="match-locations">
+                                            <summary>{{ m.location_count }} locations</summary>
+                                            <div class="location-list">
+                                                {% for location in m.locations %}
+                                                    <div class="location-item">
+                                                        {% if location.path %}<code class="source-path">{{ location.path }}</code>{% endif %}
+                                                        {% if location.url %}<a class="source-url" href="{{ location.url }}" target="_blank" rel="noopener noreferrer">{{ location.url }}</a>{% endif %}
+                                                        {% if not location.path and not location.url %}-{% endif %}
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </details>
+                                    {% else %}
+                                        {% set location = m.locations[0] %}
+                                        {% if location.path %}<code class="source-path">{{ location.path }}</code>{% endif %}
+                                        {% if location.url %}<a class="source-url" href="{{ location.url }}" target="_blank" rel="noopener noreferrer">{{ location.url }}</a>{% endif %}
+                                        {% if not location.path and not location.url %}-{% endif %}
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="num" data-label="Confidence">{{ (m.confidence ~ "%") if m.confidence is not none else "-" }}</td>
+                            <td class="found-date" data-label="Found">{{ m.found_at[:10] if m.found_at else "-" }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4">No results</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </article>
+    </main>
+    <script>
+        var modeRadios = document.querySelectorAll(".mode-radio");
+        function syncFields() {
+            var checked = document.querySelector(".mode-radio:checked");
+            document.querySelectorAll(".search-field").forEach(function (field) {
+                field.style.display = checked && field.id === checked.dataset.show ? "" : "none";
+            });
+        }
+        modeRadios.forEach(function (r) { r.addEventListener("change", syncFields); });
+        syncFields();
+
+        var fileInput = document.getElementById("search-file");
+        if (fileInput) {
+            fileInput.addEventListener("change", function () {
+                document.getElementById("search-file-name").textContent = fileInput.files[0] ? fileInput.files[0].name : "";
+            });
+        }
+    </script>
+{% endblock %}
