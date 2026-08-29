@@ -13,3 +13,5 @@ Contributions + pull requests are very welcome! But please avoid AI slop pull re
 Lantern's codebase is licensed under the Mozilla Public License 2.0.
 
 Artwork/assets are excluded from the license and may not be used without permission.
+
+Lantern is not affiliated with Cara.
