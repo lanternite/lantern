@@ -2,14 +2,14 @@
 
 [Use Lantern](https://app.lanternite.org/) - [Discord](https://discord.gg/cyfxnNFQDz)
 
-Monorepo for Lantern project. This is still very much a work in progress, we are moving fast and breaking things. Code is not the cleanest I'm aware.
+This is the monorepo for the Lantern project. Code is still very much a work-in-progress, many things need to be fixed.
 
-Pull requests are welcome, but please no AI slop pull requests. If you use LLMs to generate code (which I am not against at all - I personally use LLMs in my dev workflow), please at least review all code first. And discuss any major changes with us first!
+We are releasing various components incrementally as they are ready, the goal is to have all components open-sourced over the next 1-2 weeks.
 
-Am releasing the various components as they are ready, goal will to have everything be open sourced shortly.
+Contributions + pull requests are very welcome! But please avoid AI slop pull requests. If you are going to use LLMs to write your code - which I am not against, this is industry-standard - please at least review your code before opening a PR. Discuss major changes in the Discord with us first before opening a PR, we will likely close your PR if you make major (non-fix) changes without discussing first :)
 
 ## License
 
 Lantern's codebase is licensed under the Mozilla Public License 2.0.
 
-Artwork by Rainbun, Huni; logo by Tobias Kwan. Artwork and logos are excluded from the MPL and may not be reused without permission.
+Artwork/assets are excluded from the license and may not be used without permission.
